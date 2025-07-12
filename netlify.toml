@@ -1,3 +1,2 @@
 [build]
-  publish = "frontend"
-  functions = "backend/functions"
+  functions = "functions"
