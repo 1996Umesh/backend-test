@@ -11,6 +11,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "dotenv": "^17.2.0"
+    "bcryptjs": "^3.0.2",
+    "dotenv": "^17.2.0",
+    "mongoose": "^8.16.3"
   }
 }
