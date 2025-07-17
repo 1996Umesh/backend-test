@@ -1,5 +1,5 @@
 const path = require('path');
-require('dotenv').config({ path: path.resolve(__dirname, '../.env') }); // ✅ Load .env from root
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 
 const jwt = require('jsonwebtoken');
 
@@ -12,7 +12,7 @@ const verifyToken = (event) => {
   const token = authHeader.split(' ')[1];
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET); // ✅ JWT_SECRET is now loaded
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     return decoded; // { userId, role }
   } catch (err) {
     throw new Error('Unauthorized: Invalid or expired token');
