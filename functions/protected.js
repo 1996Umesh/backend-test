@@ -5,7 +5,7 @@ const verifyToken = require('./verifyToken');
 
 exports.handler = async (event) => {
   try {
-    const { userId, role, token } = verifyToken(event);
+    const { userId, role } = verifyToken(event);
 
     // ✅ Authorized access logic here
     return {
@@ -19,7 +19,6 @@ exports.handler = async (event) => {
         message: '✅ You are authorized',
         userId,
         role,
-        token
       }),
     };
   } catch (err) {
