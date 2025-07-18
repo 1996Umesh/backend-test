@@ -1,3 +1,5 @@
+require('dotenv').config({ path: './.env' }); // only needed if .env is outside /functions
+
 const jwt = require('jsonwebtoken');
 
 const verifyToken = (event) => {
