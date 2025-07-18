@@ -1,6 +1,3 @@
-const path = require('path');
-require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
-
 const jwt = require('jsonwebtoken');
 
 const verifyToken = (event) => {
@@ -13,7 +10,7 @@ const verifyToken = (event) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    return decoded; // { userId, role }
+    return decoded;
   } catch (err) {
     throw new Error('Unauthorized: Invalid or expired token');
   }
