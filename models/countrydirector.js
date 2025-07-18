@@ -2,12 +2,17 @@ const mongoose = require('mongoose');
 
 const CountryDirectorSchema = new mongoose.Schema(
     {
+        countrydirector_name: {
+            type: String,
+            required: true,
+            trim: true
+        },
         country: {
             type: String,
             required: true,
             trim: true
         },
-        countrydirector_name: {
+        phone: {
             type: String,
             required: true,
             trim: true
