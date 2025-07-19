@@ -1,67 +1,87 @@
+require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
+// const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const connectDB = require('./connect');
-const CountryDirector = require('./models/countrydirector');
+
+// const Superadmin = require('../models/superadmin');
+const CountryDirector = require('../models/countrydirector');
+// const Examiner = require('../models/examiner');
+// const Student = require('../models/student');
 
 exports.handler = async (event) => {
-  if (event.httpMethod === 'OPTIONS') {
-    return {
-      statusCode: 200,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'Content-Type',
-      },
-    };
-  }
-
-  if (event.httpMethod !== 'POST') {
-    return {
-      statusCode: 405,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({ message: 'Method Not Allowed' }),
-    };
-  }
-
-  try {
-    await connectDB();
-
-    const data = JSON.parse(event.body);
-    const requiredFields = ['country', 'countrydirector_name', 'phone', 'countrydirector_email', 'countrydirector_password'];
-
-    for (const field of requiredFields) {
-      if (!data[field]) {
+    // CORS preflight
+    if (event.httpMethod === 'OPTIONS') {
         return {
-          statusCode: 400,
-          headers: { 'Access-Control-Allow-Origin': '*' },
-          body: JSON.stringify({ message: `Missing field: ${field}` }),
+            statusCode: 200,
+            headers: {
+                'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*',
+                'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+                'Access-Control-Allow-Methods': 'POST, OPTIONS',
+                'Access-Control-Allow-Credentials': 'true',
+            },
+            body: '',
         };
-      }
     }
 
-    const hashedPassword = await bcrypt.hash(data.countrydirector_password, 10);
+    try {
+        await connectDB();
 
-    const newCD = new CountryDirector({
-      country: data.country,
-      countrydirector_name: data.countrydirector_name,
-      phone: data.phone,
-      countrydirector_email: data.countrydirector_email,
-      countrydirector_password: hashedPassword,
-    });
+        if (!event.body) {
+            return {
+                statusCode: 400,
+                headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*' },
+                body: JSON.stringify({ error: 'Missing request body' }),
+            };
+        }
 
-    await newCD.save();
+        const { country, countrydirector_name, phone, countrydirector_email, countrydirector_password } = JSON.parse(event.body);
 
-    return {
-      statusCode: 200,
-      headers: { 'Access-Control-Allow-Origin': '*' },
-      body: JSON.stringify({ message: 'Country Director created successfully!' }),
-    };
-  } catch (err) {
-    console.error("❌ Server Error:", err);
-    return {
-      statusCode: 500,
-      headers: { 'Access-Control-Allow-Origin': '*' },
-      body: JSON.stringify({ message: 'Internal Server Error' }),
-    };
-  }
+        const hashedPassword = await bcrypt.hash(countrydirector_password, 10);
+
+        const newCD = new CountryDirector({
+            country: country,
+            countrydirector_name: countrydirector_name,
+            phone: phone,
+            countrydirector_email: countrydirector_email,
+            countrydirector_password: hashedPassword,
+        });
+
+        await newCD.save();
+
+        return {
+            statusCode: 200,
+            headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*' },
+            body: JSON.stringify({ message: 'Country Director created successfully!' }),
+        };
+
+        // return {
+        //     statusCode: 200,
+        //     headers: {
+        //         'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*',
+        //         'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        //         'Access-Control-Allow-Credentials': 'true',
+        //     },
+        //     body: JSON.stringify({
+        //         message: 'Login successful',
+        //         token,
+        //         role,
+        //         userId: user._id,
+        //         email: email,
+        //     }),
+        // };
+    } catch (error) {
+        // console.error('Login error:', error);
+        // return {
+        //     statusCode: 500,
+        //     headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*' },
+        //     body: JSON.stringify({ error: 'Server error: ' + error.message }),
+        // };
+
+        console.error("❌ Server Error:", err);
+        return {
+            statusCode: 500,
+            headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*' },
+            body: JSON.stringify({ message: 'Internal Server Error' }),
+        };
+    }
 };
