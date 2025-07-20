@@ -1,4 +1,5 @@
 require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
+const { Console } = require('console');
 const connectDB = require('./connect');
 const CountryDirector = require('./models/countrydirector');
 
@@ -20,6 +21,8 @@ exports.handler = async (event) => {
     try {
         await connectDB();
         const directors = await CountryDirector.find().lean();
+        Console.console.log(directors);
+        
 
         return {
             statusCode: 200,
