@@ -1,5 +1,6 @@
 require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
 const connectDB = require('./connect');
+const bcrypt = require('bcryptjs');
 const CountryDirector = require('../models/countrydirector');
 
 exports.handler = async (event) => {
@@ -26,6 +27,7 @@ exports.handler = async (event) => {
   try {
     await connectDB();
     const { id, country, countrydirector_name, countrydirector_email, phone, countrydirector_password } = JSON.parse(event.body);
+    const hashedPassword = await bcrypt.hash(countrydirector_password, 10);
 
     if (!id) {
       return {
@@ -34,14 +36,26 @@ exports.handler = async (event) => {
       };
     }
 
-    const updatedDirector = await CountryDirector.findByIdAndUpdate(id, {
-      country,
-      countrydirector_name,
-      countrydirector_email,
-      phone,
-      countrydirector_password, // ideally you should hash it before saving
-    }, { new: true });
+    if(countrydirector_password != ''){
+        const updatedDirector = await CountryDirector.findByIdAndUpdate(id, {
+            country,
+            countrydirector_name,
+            countrydirector_email,
+            phone,
+            countrydirector_password: hashedPassword, // ideally you should hash it before saving
+        }, { new: true });
 
+    }else{
+        const updatedDirector = await CountryDirector.findByIdAndUpdate(id, {
+            country,
+            countrydirector_name,
+            countrydirector_email,
+            phone,
+            // countrydirector_password: hashedPassword, // ideally you should hash it before saving
+        }, { new: true });
+    }
+
+    
     return {
       statusCode: 200,
       headers: {
