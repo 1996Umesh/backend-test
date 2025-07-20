@@ -3,17 +3,19 @@ const { Console } = require('console');
 const connectDB = require('./connect');
 const CountryDirector = require('./models/countrydirector');
 
+const headers = {
+    'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Methods': 'GET, OPTIONS',
+    'Access-Control-Allow-Credentials': 'true',
+    'Content-Type': 'application/json'
+};
+
 exports.handler = async (event) => {
     if (event.httpMethod === 'OPTIONS') {
         return {
             statusCode: 200,
-            headers: {
-                'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*',
-                'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-                'Access-Control-Allow-Methods': 'GET, OPTIONS',
-                'Access-Control-Allow-Credentials': 'true',
-                'Content-Type': 'application/json'
-            },
+            headers,
             body: '',
         };
     }
@@ -21,25 +23,18 @@ exports.handler = async (event) => {
     try {
         await connectDB();
         const directors = await CountryDirector.find().lean();
-        Console.console.log(directors);
-        
+        // console.log(directors);
 
         return {
             statusCode: 200,
-            headers: {
-                'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*',
-                'Access-Control-Allow-Headers': 'Content-Type',
-                'Content-Type': 'application/json'
-            },
+            headers,
             body: JSON.stringify(directors),
         };
     } catch (error) {
         console.error("❌ Error fetching country directors:", error);
         return {
             statusCode: 500,
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers,
             body: JSON.stringify({ error: 'Internal Server Error' }),
         };
     }
