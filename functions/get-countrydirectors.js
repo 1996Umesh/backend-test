@@ -1,7 +1,6 @@
 require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
-// const { Console } = require('console');
 const connectDB = require('./connect');
-const CountryDirector = require('./models/countrydirector');
+const CountryDirector = require('../models/countrydirector');
 
 const headers = {
     'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*',
