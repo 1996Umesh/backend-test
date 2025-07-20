@@ -27,7 +27,6 @@ exports.handler = async (event) => {
   try {
     await connectDB();
     const { id, country, countrydirector_name, countrydirector_email, phone, countrydirector_password } = JSON.parse(event.body);
-    const hashedPassword = await bcrypt.hash(countrydirector_password, 10);
 
     if (!id) {
       return {
@@ -36,26 +35,20 @@ exports.handler = async (event) => {
       };
     }
 
-    if(countrydirector_password != ''){
-        const updatedDirector = await CountryDirector.findByIdAndUpdate(id, {
-            country,
-            countrydirector_name,
-            countrydirector_email,
-            phone,
-            countrydirector_password: hashedPassword, // ideally you should hash it before saving
-        }, { new: true });
+    let updateData = {
+      country,
+      countrydirector_name,
+      countrydirector_email,
+      phone
+    };
 
-    }else{
-        const updatedDirector = await CountryDirector.findByIdAndUpdate(id, {
-            country,
-            countrydirector_name,
-            countrydirector_email,
-            phone,
-            // countrydirector_password: hashedPassword, // ideally you should hash it before saving
-        }, { new: true });
+    if (countrydirector_password && countrydirector_password.trim() !== '') {
+      const hashedPassword = await bcrypt.hash(countrydirector_password, 10);
+      updateData.countrydirector_password = hashedPassword;
     }
 
-    
+    const updatedDirector = await CountryDirector.findByIdAndUpdate(id, updateData, { new: true });
+
     return {
       statusCode: 200,
       headers: {
