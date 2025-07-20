@@ -1,5 +1,5 @@
 require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
-const { Console } = require('console');
+// const { Console } = require('console');
 const connectDB = require('./connect');
 const CountryDirector = require('./models/countrydirector');
 
