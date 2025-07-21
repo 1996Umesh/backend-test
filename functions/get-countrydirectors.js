@@ -21,8 +21,7 @@ exports.handler = async (event) => {
 
     try {
         await connectDB();
-        const directors = await CountryDirector.find().lean();
-        // console.log(directors);
+        const directors = await CountryDirector.find().sort({ _id: -1 }).lean();
 
         return {
             statusCode: 200,
