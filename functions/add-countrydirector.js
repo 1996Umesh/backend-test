@@ -4,68 +4,100 @@ const connectDB = require('./connect');
 const CountryDirector = require('../models/countrydirector');
 
 exports.handler = async (event) => {
-    // CORS preflight
-    if (event.httpMethod === 'OPTIONS') {
-        return {
-            statusCode: 200,
-            headers: {
-                'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*',
-                'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-                'Access-Control-Allow-Methods': 'POST, OPTIONS',
-                'Access-Control-Allow-Credentials': 'true',
-            },
-            body: '',
-        };
+  // Handle CORS preflight
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 200,
+      headers: {
+        'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Credentials': 'true',
+      },
+      body: '',
+    };
+  }
+
+  if (event.httpMethod !== 'POST') {
+    return {
+      statusCode: 405,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ error: 'Method Not Allowed' }),
+    };
+  }
+
+  try {
+    await connectDB();
+
+    if (!event.body) {
+      return {
+        statusCode: 400,
+        headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*' },
+        body: JSON.stringify({ error: 'Missing request body' }),
+      };
     }
 
-    try {
-        await connectDB();
+    const {
+      country,
+      countrydirector_name,
+      countrydirector_email,
+      phone,
+      countrydirector_password,
+    } = JSON.parse(event.body);
 
-        if (!event.body) {
-            return {
-                statusCode: 400,
-                headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*' },
-                body: JSON.stringify({ error: 'Missing request body' }),
-            };
-        }
-
-        const { country, countrydirector_name, phone, countrydirector_email, countrydirector_password } = JSON.parse(event.body);
-
-        const hashedPassword = await bcrypt.hash(countrydirector_password, 10);
-
-        const exsistingUser = await CountryDirector.findOne({ countrydirector_email: countrydirector_email });
-        if (!exsistingUser) {
-                const newCD = new CountryDirector({
-                country: country,
-                countrydirector_name: countrydirector_name,
-                phone: phone,
-                countrydirector_email: countrydirector_email,
-                countrydirector_password: hashedPassword,
-            });
-            await newCD.save();
-
-            return {
-                statusCode: 200,
-                headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*' },
-                body: JSON.stringify({ message: 'Country Director created successfully!' }),
-            };
-        }else{
-            return {
-                statusCode: 400,
-                headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*' },
-                body: JSON.stringify({ error: 'Email already exists' }),
-            }
-        }
-
-        
-
-        
-    } catch (error) {
-        console.error("❌ Server Error:", err);
-        return {
-            statusCode: 500,
-            headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*' },
-            body: JSON.stringify({ message: 'Internal Server Error' }),
-        };
+    // Validate required fields
+    if (
+      !country ||
+      !countrydirector_name ||
+      !countrydirector_email ||
+      !phone ||
+      !countrydirector_password
+    ) {
+      return {
+        statusCode: 400,
+        headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*' },
+        body: JSON.stringify({ error: 'All fields are required.' }),
+      };
     }
+
+    // Check if user already exists
+    const existing = await CountryDirector.findOne({ countrydirector_email });
+    if (existing) {
+      return {
+        statusCode: 400,
+        headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*' },
+        body: JSON.stringify({ error: 'Email already exists.' }),
+      };
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(countrydirector_password, 10);
+
+    // Create new CountryDirector
+    const newDirector = new CountryDirector({
+      country,
+      countrydirector_name,
+      countrydirector_email,
+      phone, // already full international number (e.g., +94771234567)
+      countrydirector_password: hashedPassword,
+    });
+
+    const savedDirector = await newDirector.save();
+
+    return {
+      statusCode: 200,
+      headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*' },
+      body: JSON.stringify({
+        message: 'Country Director created successfully!',
+        _id: savedDirector._id,
+      }),
+    };
+  } catch (err) {
+    console.error('❌ Server Error:', err);
+    return {
+      statusCode: 500,
+      headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*' },
+      body: JSON.stringify({ error: 'Internal Server Error' }),
+    };
+  }
 };
