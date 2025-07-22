@@ -2,6 +2,7 @@ require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') }
 const bcrypt = require('bcryptjs');
 const connectDB = require('./connect');
 const CountryDirector = require('../models/countrydirector');
+const authorize = require('./authorize'); // If in separate file, otherwise copy function above
 
 exports.handler = async (event) => {
   // Handle CORS preflight
@@ -23,6 +24,16 @@ exports.handler = async (event) => {
       statusCode: 405,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ error: 'Method Not Allowed' }),
+    };
+  }
+
+  // ✅ Authorize request (only allow superadmin)
+  const auth = authorize(event, ['superadmin']);
+  if (!auth.success) {
+    return {
+      statusCode: auth.statusCode,
+      headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*' },
+      body: auth.body,
     };
   }
 
