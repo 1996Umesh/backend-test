@@ -36,14 +36,15 @@ exports.handler = async (event) => {
 
     const { email, password } = JSON.parse(event.body);
 
-    let user = null;
+    let userId = null;
     let role = null;
-    let passwordMatch = false;
+    let user = null;
 
     // Check Superadmin
     const superadmin = await Superadmin.findOne({ superadmin_email: email });
     if (superadmin && await bcrypt.compare(password, superadmin.superadmin_password)) {
       user = superadmin;
+      userId = superadmin._id;
       role = 'superadmin';
     }
 
@@ -52,6 +53,7 @@ exports.handler = async (event) => {
       const countrydirector = await CountryDirector.findOne({ countrydirector_email: email });
       if (countrydirector && await bcrypt.compare(password, countrydirector.countrydirector_password)) {
         user = countrydirector;
+        userId = countrydirector._id;
         role = 'countrydirector';
       }
     }
@@ -61,6 +63,7 @@ exports.handler = async (event) => {
       const examiner = await Examiner.findOne({ examiner_email: email });
       if (examiner && await bcrypt.compare(password, examiner.examiner_password)) {
         user = examiner;
+        userId = examiner._id;
         role = 'examiner';
       }
     }
@@ -70,6 +73,7 @@ exports.handler = async (event) => {
       const student = await Student.findOne({ student_email: email });
       if (student && await bcrypt.compare(password, student.student_password)) {
         user = student;
+        userId = student._id;
         role = 'student';
       }
     }
@@ -84,7 +88,7 @@ exports.handler = async (event) => {
 
     // 🔐 Generate JWT token
     const token = jwt.sign(
-      { userId: user._id, role },
+      { userId, role },
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
@@ -100,8 +104,7 @@ exports.handler = async (event) => {
         message: 'Login successful',
         token,
         role,
-        userId: user._id,
-        email: email,
+        userId
       }),
     };
   } catch (error) {
