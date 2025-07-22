@@ -19,13 +19,13 @@ exports.handler = async (event) => {
   if (event.httpMethod !== 'DELETE') {
     return {
       statusCode: 405,
-      body: JSON.stringify({ error: 'Method not allowed' }),
+      body: JSON.stringify({ error: 'Method Not Allowed' }),
     };
   }
 
   try {
     await connectDB();
-    const { id } = JSON.parse(event.body);
+    const { id } = event.queryStringParameters;
 
     if (!id) {
       return {
@@ -40,9 +40,8 @@ exports.handler = async (event) => {
       statusCode: 200,
       headers: {
         'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*',
-        'Access-Control-Allow-Headers': 'Content-Type',
       },
-      body: JSON.stringify({ message: 'Deleted successfully' }),
+      body: JSON.stringify({ message: 'Country Director deleted successfully' }),
     };
   } catch (err) {
     console.error('❌ Error deleting director:', err);
