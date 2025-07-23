@@ -20,3 +20,5 @@ function authorize(event, allowedRoles = []) {
     return { statusCode: 401, body: JSON.stringify({ error: 'Invalid token' }) };
   }
 }
+
+module.exports = authorize;
