@@ -2,7 +2,7 @@ require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') }
 const connectDB = require('./connect');
 const Superadmin = require('../models/superadmin');
 const authorize = require('./authorize');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 const headers = {
     'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*',
@@ -19,7 +19,13 @@ exports.handler = async (event) => {
         await connectDB();
 
         const auth = authorize(event, ['superadmin']);
-        if (!auth.success) return { ...auth, headers };
+        if (!auth.success) {
+            return {
+                statusCode: 401,
+                headers,
+                body: JSON.stringify({ error: 'Unauthorized' }),
+            };
+        };
 
         const { id, superadmin_email, superadmin_password } = JSON.parse(event.body);
 
