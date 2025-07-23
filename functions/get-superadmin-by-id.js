@@ -46,7 +46,8 @@ exports.handler = async (event) => {
       statusCode: 200,
       headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*' },
       body: JSON.stringify({
-        superadmin_email: superadmin.superadmin_email
+        superadmin_id: superadmin._id,
+        superadmin_email: superadmin.superadmin_email,
       })
     };
   } catch (err) {
