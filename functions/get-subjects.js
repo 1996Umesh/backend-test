@@ -23,10 +23,9 @@ exports.handler = async (event) => {
     try {
         await connectDB();
 
-        
+        const countrydirectorId = event.queryStringParameters.countrydirector_id;
+        const subjects = await Subject.find({ countrydirector_id: countrydirectorId }).sort({ _id: -1 }).lean();
 
-        // const subjects = await Subject.find().sort({ _id: -1 }).lean();
-        const subjects = await Subject.find();
         console.log(subjects);
 
         return {
