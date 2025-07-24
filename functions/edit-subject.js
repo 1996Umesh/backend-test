@@ -44,7 +44,7 @@ exports.handler = async (event) => {
     }
 
     const updateData = {
-        subject
+        subject_name: subject
     };
 
     const updated = await Subject.findByIdAndUpdate(id, updateData, { new: true });
