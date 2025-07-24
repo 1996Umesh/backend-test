@@ -26,8 +26,6 @@ exports.handler = async (event) => {
         const countrydirectorId = event.queryStringParameters.countrydirector_id;
         const subjects = await Subject.find({ countrydirector_id: countrydirectorId }).sort({ _id: -1 }).lean();
 
-        console.log(subjects);
-
         return {
             statusCode: 200,
             headers,
