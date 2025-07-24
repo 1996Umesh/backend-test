@@ -60,7 +60,7 @@ exports.handler = async (event) => {
         }
 
         // Create new Subject
-        const newSubject = new Subject({ subject_name });
+        const newSubject = new Subject({ subject_name, countrydirector_id });
 
         const savedSubject = await newSubject.save();
 
