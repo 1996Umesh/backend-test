@@ -48,7 +48,7 @@ exports.handler = async (event) => {
             };
         }
 
-        const { subject_name } = JSON.parse(event.body);
+        const { subject_name, countrydirector_id } = JSON.parse(event.body);
 
         // Validate required fields
         if (!subject_name) {
