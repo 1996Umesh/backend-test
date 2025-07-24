@@ -25,7 +25,9 @@ exports.handler = async (event) => {
 
         
 
-        const subjects = await Subject.find().sort({ _id: -1 }).lean();
+        // const subjects = await Subject.find().sort({ _id: -1 }).lean();
+        const subjects = await Subject.find();
+        console.log(subjects);
 
         return {
             statusCode: 200,
