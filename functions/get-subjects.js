@@ -23,14 +23,7 @@ exports.handler = async (event) => {
     try {
         await connectDB();
 
-        const auth = authorize(event, ['countrydirector']);
-        if (!auth.success) {
-            return {
-                statusCode: 401,
-                headers,
-                body: JSON.stringify({ error: 'Unauthorized' }),
-            };
-        };
+        
 
         const subjects = await Subject.find().sort({ _id: -1 }).lean();
 
