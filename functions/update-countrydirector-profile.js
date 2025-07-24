@@ -18,14 +18,14 @@ exports.handler = async (event) => {
     try {
         await connectDB();
 
-        // const auth = authorize(event, ['countrydirector']);
-        // if (!auth.success) {
-        //     return {
-        //         statusCode: 401,
-        //         headers,
-        //         body: JSON.stringify({ error: 'Unauthorized' }),
-        //     };
-        // };
+        const auth = authorize(event, ['countrydirector']);
+        if (!auth.success) {
+            return {
+                statusCode: 401,
+                headers,
+                body: JSON.stringify({ error: 'Unauthorized' }),
+            };
+        };
 
         const { id, countrydirector_email, countrydirector_password } = JSON.parse(event.body);
 
