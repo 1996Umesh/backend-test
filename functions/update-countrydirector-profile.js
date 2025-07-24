@@ -27,9 +27,9 @@ exports.handler = async (event) => {
             };
         };
 
-        const { id, superadmin_email, superadmin_password } = JSON.parse(event.body);
+        const { id, countrydirector_email, countrydirector_password } = JSON.parse(event.body);
 
-        if (!id || !superadmin_email || !superadmin_password) {
+        if (!id || !countrydirector_email || !countrydirector_password) {
             return {
                 statusCode: 400,
                 headers,
@@ -37,13 +37,13 @@ exports.handler = async (event) => {
             };
         }
 
-        const hashedPassword = await bcrypt.hash(superadmin_password, 10);
+        const hashedPassword = await bcrypt.hash(countrydirector_password, 10);
 
-        const updated = await Superadmin.findByIdAndUpdate(
+        const updated = await CountryDirector.findByIdAndUpdate(
             id,
             {
-                superadmin_email,
-                superadmin_password: hashedPassword,
+                countrydirector_email,
+                countrydirector_password: hashedPassword,
             },
             { new: true }
         );
