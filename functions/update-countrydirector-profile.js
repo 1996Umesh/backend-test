@@ -52,7 +52,7 @@ exports.handler = async (event) => {
             return {
                 statusCode: 404,
                 headers,
-                body: JSON.stringify({ error: 'Superadmin not found' }),
+                body: JSON.stringify({ error: 'Countrydirector not found' }),
             };
         }
 
