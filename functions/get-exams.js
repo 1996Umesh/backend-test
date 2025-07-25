@@ -29,6 +29,9 @@ exports.handler = async (event) => {
             .sort({ _id: -1 })
             .lean();
 
+        // Optionally format date
+        
+
 
         return {
             statusCode: 200,
