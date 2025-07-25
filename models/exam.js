@@ -41,9 +41,9 @@ const ExamSchema = new mongoose.Schema({
     required: true
   }
 },
-{
+  {
     collection: 'exams',
     // timestamps: true // Adds createdAt, updatedAt
-});
+  });
 
 module.exports = mongoose.model('Exam', ExamSchema);
