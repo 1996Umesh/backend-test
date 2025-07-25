@@ -1,7 +1,7 @@
 require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
 const connectDB = require('./connect');
 const Exam = require('../models/exam');
-// const Subject = require('../models/subject');
+
 const authorize = require('./authorize');
 
 const headers = {
@@ -27,7 +27,6 @@ exports.handler = async (event) => {
         const examinerId = event.queryStringParameters.examiner_id;
         const exams = await Exam.find({ examiner_id: examinerId })
             .sort({ _id: -1 })
-            .populate('subject_id') // this pulls in full subject details
             .lean();
 
 
