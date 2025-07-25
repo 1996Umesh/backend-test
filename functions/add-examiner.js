@@ -86,7 +86,7 @@ exports.handler = async (event) => {
             examiner_password: hashedPassword,
         });
 
-        const savedExaminer = await Examiner.save();
+        const savedExaminer = await newExaminer.save();
 
         return {
             statusCode: 200,
