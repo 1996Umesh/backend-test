@@ -4,7 +4,6 @@ const bcrypt = require('bcryptjs');
 const Examiner = require('../models/examiner');
 
 exports.handler = async (event) => {
-  // Handle CORS preflight
   if (event.httpMethod === 'OPTIONS') {
     return {
       statusCode: 200,
@@ -21,9 +20,7 @@ exports.handler = async (event) => {
   if (event.httpMethod !== 'PUT') {
     return {
       statusCode: 405,
-      headers: {
-        'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*',
-      },
+      headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*' },
       body: JSON.stringify({ error: 'Method Not Allowed' }),
     };
   }
@@ -33,21 +30,18 @@ exports.handler = async (event) => {
 
     const { id, examiner_name, subject_id, examiner_email, examiner_password } = JSON.parse(event.body);
 
-    if (!id) {
+    if (!id || !examiner_name || !subject_id || !examiner_email) {
       return {
         statusCode: 400,
-        headers: {
-          'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*',
-        },
-        body: JSON.stringify({ error: 'ID is required' }),
+        headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*' },
+        body: JSON.stringify({ error: 'All fields except password are required.' }),
       };
     }
 
     const updateData = {
-        examiner_name,
-        subject_id,
-        examiner_email,
-        examiner_password,
+      examiner_name,
+      subject_id,
+      examiner_email,
     };
 
     if (examiner_password && examiner_password.trim() !== '') {
@@ -60,9 +54,7 @@ exports.handler = async (event) => {
     if (!updated) {
       return {
         statusCode: 404,
-        headers: {
-          'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*',
-        },
+        headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*' },
         body: JSON.stringify({ error: 'Examiner not found' }),
       };
     }
@@ -80,9 +72,7 @@ exports.handler = async (event) => {
     console.error('❌ Error updating examiner:', err);
     return {
       statusCode: 500,
-      headers: {
-        'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*',
-      },
+      headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*' },
       body: JSON.stringify({ error: 'Internal Server Error' }),
     };
   }
