@@ -84,6 +84,7 @@ exports.handler = async (event) => {
             subject_id,
             examiner_email,
             examiner_password: hashedPassword,
+            countrydirector_id,
         });
 
         const savedExaminer = await newExaminer.save();
