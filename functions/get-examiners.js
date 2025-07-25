@@ -1,6 +1,7 @@
 require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
 const connectDB = require('./connect');
 const Examiner = require('../models/examiner');
+const Subject = require('../models/subject');
 const authorize = require('./authorize');
 
 const headers = {
@@ -24,7 +25,11 @@ exports.handler = async (event) => {
         await connectDB();
 
         const countrydirectorId = event.queryStringParameters.countrydirector_id;
-        const examiners = await Examiner.find({ countrydirector_id: countrydirectorId }).sort({ _id: -1 }).lean();
+        const examiners = await Examiner.find({ countrydirector_id: countrydirectorId })
+            .sort({ _id: -1 })
+            .populate('subject_id') // this pulls in full subject details
+            .lean();
+
 
         return {
             statusCode: 200,
