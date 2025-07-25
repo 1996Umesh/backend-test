@@ -31,7 +31,7 @@ exports.handler = async (event) => {
   try {
     await connectDB();
 
-    const { id, examiner_name, subject_id, examiner_password } = JSON.parse(event.body);
+    const { id, examiner_name, subject_id, examiner_email, examiner_password } = JSON.parse(event.body);
 
     if (!id) {
       return {
@@ -46,6 +46,7 @@ exports.handler = async (event) => {
     const updateData = {
         examiner_name,
         subject_id,
+        examiner_email,
         examiner_password,
     };
 
@@ -62,7 +63,7 @@ exports.handler = async (event) => {
         headers: {
           'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*',
         },
-        body: JSON.stringify({ error: 'Director not found' }),
+        body: JSON.stringify({ error: 'Examiner not found' }),
       };
     }
 
@@ -76,7 +77,7 @@ exports.handler = async (event) => {
     };
 
   } catch (err) {
-    console.error('❌ Error updating director:', err);
+    console.error('❌ Error updating examiner:', err);
     return {
       statusCode: 500,
       headers: {
