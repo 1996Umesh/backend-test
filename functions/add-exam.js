@@ -42,33 +42,35 @@ exports.handler = async (event) => {
     try {
         await connectDB();
 
-        if (!event.body) {
-            return {
-                statusCode: 400,
-                headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*' },
-                body: JSON.stringify({ error: 'Missing request body' }),
-            };
-        }
-
         const { exam_name, exam_fee, exam_date, exam_start_time, exam_end_time, examiner_id } = JSON.parse(event.body);
 
-        // Validate required fields
         if (!exam_name || !exam_fee || !exam_date || !exam_start_time || !exam_end_time || !examiner_id) {
             return {
                 statusCode: 400,
-                headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*' },
                 body: JSON.stringify({ error: 'All fields are required.' }),
             };
         }
 
         const examiner = await Examiner.findById(examiner_id);
-        const countrydirectorId = examiner.countrydirector_id;
-        const subjectId = examiner.subject_id;
-        const countrydirector = await Countrydirector.findById(countrydirectorId);
-        const country = countrydirector.country;
-        const duration = exam_end_time - exam_start_time;
+        if (!examiner) {
+            return {
+                statusCode: 404,
+                body: JSON.stringify({ error: 'Examiner not found.' }),
+            };
+        }
 
-        // Create new Exam
+        const countrydirector = await Countrydirector.findById(examiner.countrydirector_id);
+        if (!countrydirector) {
+            return {
+                statusCode: 404,
+                body: JSON.stringify({ error: 'Countrydirector not found.' }),
+            };
+        }
+
+        const start = new Date(`${exam_date}T${exam_start_time}`);
+        const end = new Date(`${exam_date}T${exam_end_time}`);
+        const duration = (end - start) / 60000;
+
         const newExam = new Exam({
             exam_name,
             exam_fee,
@@ -76,27 +78,27 @@ exports.handler = async (event) => {
             exam_start_time,
             exam_end_time,
             exam_time_duration: duration,
-            subject_id: subjectId,
-            examiner_id: examiner_id,
-            country: country,
+            subject_id: examiner.subject_id,
+            examiner_id,
+            country: countrydirector.country,
         });
 
         const savedExam = await newExam.save();
 
         return {
             statusCode: 200,
-            headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*' },
             body: JSON.stringify({
                 message: 'Exam created successfully!',
                 _id: savedExam._id,
             }),
         };
+
     } catch (err) {
-        console.error('❌ Server Error:', err);
+        console.error('❌ Error details:', err);
         return {
             statusCode: 500,
-            headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*' },
-            body: JSON.stringify({ error: 'Internal Server Error' }),
+            body: JSON.stringify({ error: 'Internal Server Error', details: err.message }),
         };
     }
+
 };
