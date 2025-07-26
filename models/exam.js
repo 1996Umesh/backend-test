@@ -36,7 +36,7 @@ const ExamSchema = new mongoose.Schema({
     ref: 'Subject',
     required: true
   },
-  country_id: {
+  country: {
     type: String,
     required: true
   }
