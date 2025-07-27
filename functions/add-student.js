@@ -28,14 +28,14 @@ exports.handler = async (event) => {
   }
 
   // ✅ Authorize request (only allow superadmin)
-//   const auth = authorize(event, ['superadmin']);
-//   if (!auth.success) {
-//     return {
-//       statusCode: auth.statusCode,
-//       headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*' },
-//       body: auth.body,
-//     };
-//   }
+  //   const auth = authorize(event, ['superadmin']);
+  //   if (!auth.success) {
+  //     return {
+  //       statusCode: auth.statusCode,
+  //       headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*' },
+  //       body: auth.body,
+  //     };
+  //   }
 
   try {
     await connectDB();
@@ -49,20 +49,30 @@ exports.handler = async (event) => {
     }
 
     const {
-      country,
-      countrydirector_name,
-      countrydirector_email,
-      phone,
-      countrydirector_password,
+      student_email,
+      student_password,
+      student_name,
+      student_address,
+      student_phone,
+      date_of_birth,
+      gender,
+      guardian_name,
+      guardian_address,
+      guardian_phone,
     } = JSON.parse(event.body);
 
     // Validate required fields
     if (
-      !country ||
-      !countrydirector_name ||
-      !countrydirector_email ||
-      !phone ||
-      !countrydirector_password
+      !student_email ||
+      !student_password ||
+      !student_name ||
+      !student_address ||
+      !student_phone ||
+      !date_of_birth ||
+      !gender ||
+      !guardian_name ||
+      !guardian_address ||
+      !guardian_phone
     ) {
       return {
         statusCode: 400,
@@ -72,7 +82,7 @@ exports.handler = async (event) => {
     }
 
     // Check if user already exists
-    const existing = await CountryDirector.findOne({ countrydirector_email });
+    const existing = await Student.findOne({ student_email });
     if (existing) {
       return {
         statusCode: 400,
@@ -82,25 +92,30 @@ exports.handler = async (event) => {
     }
 
     // Hash password
-    const hashedPassword = await bcrypt.hash(countrydirector_password, 10);
+    const hashedPassword = await bcrypt.hash(student_password, 10);
 
-    // Create new CountryDirector
-    const newDirector = new CountryDirector({
-      country,
-      countrydirector_name,
-      countrydirector_email,
-      phone, // already full international number (e.g., +94771234567)
-      countrydirector_password: hashedPassword,
+    // Create new Student
+    const newStudent = new Student({
+      student_email,
+      student_password,
+      student_name,
+      student_address,
+      student_phone,
+      date_of_birth,
+      gender,
+      guardian_name,
+      guardian_address,
+      guardian_phone,
     });
 
-    const savedDirector = await newDirector.save();
+    const savedStudent = await newStudent.save();
 
     return {
       statusCode: 200,
       headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*' },
       body: JSON.stringify({
         message: 'Student registered successfully!',
-        _id: savedDirector._id,
+        _id: savedStudent._id,
       }),
     };
   } catch (err) {
