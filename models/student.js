@@ -20,6 +20,11 @@ const StudentSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    student_country: {
+      type: String,
+      required: true,
+      trim: true,
+    },
     student_phone: {
       type: String,
       required: true,

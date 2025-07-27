@@ -27,16 +27,6 @@ exports.handler = async (event) => {
     };
   }
 
-  // ✅ Authorize request (only allow superadmin)
-  //   const auth = authorize(event, ['superadmin']);
-  //   if (!auth.success) {
-  //     return {
-  //       statusCode: auth.statusCode,
-  //       headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*' },
-  //       body: auth.body,
-  //     };
-  //   }
-
   try {
     await connectDB();
 
@@ -53,6 +43,7 @@ exports.handler = async (event) => {
       student_password,
       student_name,
       student_address,
+      student_country,
       student_phone,
       date_of_birth,
       gender,
@@ -67,6 +58,7 @@ exports.handler = async (event) => {
       !student_password ||
       !student_name ||
       !student_address ||
+      !student_country ||
       !student_phone ||
       !date_of_birth ||
       !gender ||
@@ -100,6 +92,7 @@ exports.handler = async (event) => {
       student_password: hashedPassword,
       student_name,
       student_address,
+      student_country,
       student_phone,
       date_of_birth,
       gender,
