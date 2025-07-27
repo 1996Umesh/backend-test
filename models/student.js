@@ -30,7 +30,6 @@ const StudentSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      match: [/^\d+$/, 'Phone number must be digits only'],
     },
     student_address: {
       type: String,
@@ -61,7 +60,6 @@ const StudentSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      match: [/^\d+$/, 'Phone number must be digits only'],
     },
   },
   {
