@@ -20,13 +20,7 @@ const StudentSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    // student_country_code: {
-    //   type: String,
-    //   required: true,
-    //   trim: true,
-    //   maxlength: 5,
-    // },
-    student_phone_no: {
+    student_phone: {
       type: String,
       required: true,
       trim: true,
@@ -56,7 +50,7 @@ const StudentSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    guardian_phone_no: {
+    guardian_phone: {
       type: String,
       required: true,
       trim: true,
