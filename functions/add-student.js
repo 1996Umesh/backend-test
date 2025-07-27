@@ -97,7 +97,7 @@ exports.handler = async (event) => {
     // Create new Student
     const newStudent = new Student({
       student_email,
-      student_password,
+      student_password: hashedPassword,
       student_name,
       student_address,
       student_phone,
