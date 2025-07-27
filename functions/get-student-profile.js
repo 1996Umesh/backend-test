@@ -59,7 +59,7 @@ exports.handler = async (event) => {
         student_id: student._id,
         student_email: student.student_email,
         student_name: student.student_name,
-        student_phone_no: student.student_phone_no,
+        student_phone_no: student.student_phone,
       }),
     };
   } catch (err) {
