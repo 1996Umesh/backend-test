@@ -1,6 +1,6 @@
 require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
 const connectDB = require('./connect');
-const Subject = require('../models/subject');
+const Exam = require('../models/exam');
 // const authorize = require('./authorize');
 
 const headers = {
@@ -22,16 +22,26 @@ exports.handler = async (event) => {
 
     try {
         await connectDB();
+
+        const id = event.queryStringParameters && event.queryStringParameters.id;
+
+        if (!id) {
+            return {
+                statusCode: 400,
+                headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*' },
+                body: JSON.stringify({ error: 'Missing ID parameter' }),
+            };
+        }
     
-        const subjects = await Subject.find().lean();
+        const exams = await Exam.findById(id).lean();
 
         return {
             statusCode: 200,
             headers,
-            body: JSON.stringify(subjects),
+            body: JSON.stringify(exams),
         };
     } catch (error) {
-        console.error("❌ Error fetching subjects:", error);
+        console.error("❌ Error fetching exams:", error);
         return {
             statusCode: 500,
             headers,
