@@ -24,9 +24,10 @@ exports.handler = async (event) => {
         };
     }
 
-    const id = event.queryStringParameters && event.queryStringParameters.id;
+    const subjectId = event.queryStringParameters && event.queryStringParameters.subject_id;
 
-    if (!id) {
+
+    if (!subjectId) {
         return {
             statusCode: 400,
             headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*' },
@@ -37,9 +38,9 @@ exports.handler = async (event) => {
     try {
         await connectDB();
 
-        const exam = await Exam.findById(id).lean();
+        const exams = await Exam.find({ subject_id: subjectId }).lean();
 
-        if (!exam) {
+        if (!exams) {
             return {
                 statusCode: 404,
                 headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*' },
@@ -50,7 +51,7 @@ exports.handler = async (event) => {
         return {
             statusCode: 200,
             headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*' },
-            body: JSON.stringify(exam),
+            body: JSON.stringify(exams),
         };
     } catch (err) {
         console.error('❌ Server Error:', err);
