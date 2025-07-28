@@ -1,8 +1,7 @@
 require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
 const connectDB = require('./connect');
 const StudentExam = require('../models/studentexam');
-
-const authorize = require('./authorize');
+const authorize = require('./authorize'); // ✅ This should verify token and role
 
 const headers = {
     'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*',
@@ -26,7 +25,7 @@ exports.handler = async (event) => {
     if (!auth.success) {
         return {
             statusCode: auth.statusCode,
-            headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*' },
+            headers,
             body: auth.body,
         };
     }
@@ -35,6 +34,15 @@ exports.handler = async (event) => {
         await connectDB();
 
         const studentId = event.queryStringParameters.student_id;
+
+        if (!studentId) {
+            return {
+                statusCode: 400,
+                headers,
+                body: JSON.stringify({ error: 'Missing student_id parameter' }),
+            };
+        }
+
         const studentexams = await StudentExam.find({ student_id: studentId })
             .sort({ _id: -1 })
             .lean();
