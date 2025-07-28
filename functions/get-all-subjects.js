@@ -1,7 +1,7 @@
 require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
 const connectDB = require('./connect');
 const Subject = require('../models/subject');
-const authorize = require('./authorize');
+// const authorize = require('./authorize');
 
 const headers = {
     'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*',
@@ -23,8 +23,9 @@ exports.handler = async (event) => {
     try {
         await connectDB();
 
-        // const countrydirectorId = event.queryStringParameters.countrydirector_id;
+    
         const subjects = await Subject.find().lean();
+        console.log(subjects);
 
         return {
             statusCode: 200,
