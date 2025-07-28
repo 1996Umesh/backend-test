@@ -23,7 +23,7 @@ exports.handler = async (event) => {
     try {
         await connectDB();
 
-        const id = event.queryStringParameters && event.queryStringParameters.id;
+        // const id = event.queryStringParameters && event.queryStringParameters.id;
 
         if (!id) {
             return {
@@ -33,7 +33,7 @@ exports.handler = async (event) => {
             };
         }
 
-        const exams = await Exam.findById(id).lean();
+        // const exams = await Exam.findById(id).lean();
 
         return {
             statusCode: 200,
