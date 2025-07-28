@@ -52,7 +52,7 @@ exports.handler = async (event) => {
             statusCode: 200,
             body: JSON.stringify({
                 message: 'Successfully Registered for exam!',
-                _id: savedExamReg._id,
+                id: savedExamReg._id,
             }),
         };
 
