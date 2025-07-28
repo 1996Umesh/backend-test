@@ -32,7 +32,7 @@ exports.handler = async (event) => {
                 body: JSON.stringify({ error: 'Missing ID parameter' }),
             };
         }
-    
+
         const exams = await Exam.findById(id).lean();
 
         return {
