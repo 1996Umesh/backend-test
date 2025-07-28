@@ -25,6 +25,7 @@ exports.handler = async (event) => {
     }
 
     const subjectId = event.queryStringParameters && event.queryStringParameters.subject_id;
+    console.log(subjectId);
 
 
     if (!subjectId) {
