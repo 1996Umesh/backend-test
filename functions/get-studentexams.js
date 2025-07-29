@@ -1,6 +1,7 @@
 require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
 const connectDB = require('./connect');
 const StudentExam = require('../models/studentexam');
+const Exam = require('../models/exam');
 const authorize = require('./authorize'); // ✅ This should verify token and role
 
 const headers = {
