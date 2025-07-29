@@ -1,65 +1,72 @@
 require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
+const mongoose = require('mongoose');
 const connectDB = require('./connect');
 const StudentExam = require('../models/studentexam');
-const Exam = require('../models/exam');
-const authorize = require('./authorize'); // ✅ This should verify token and role
+const Exam = require('../models/exam'); // ✅ required for populate to work
+const authorize = require('./authorize');
 
 const headers = {
-    'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    'Access-Control-Allow-Methods': 'GET, OPTIONS',
-    'Access-Control-Allow-Credentials': 'true',
-    'Content-Type': 'application/json'
+  'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  'Access-Control-Allow-Methods': 'GET, OPTIONS',
+  'Access-Control-Allow-Credentials': 'true',
+  'Content-Type': 'application/json'
 };
 
 exports.handler = async (event) => {
-    if (event.httpMethod === 'OPTIONS') {
-        return {
-            statusCode: 200,
-            headers,
-            body: '',
-        };
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 200,
+      headers,
+      body: '',
+    };
+  }
+
+  const auth = authorize(event, ['student']);
+  if (!auth.success) {
+    return {
+      statusCode: auth.statusCode,
+      headers,
+      body: auth.body,
+    };
+  }
+
+  try {
+    await connectDB();
+
+    const studentId = event.queryStringParameters.student_id;
+    if (!studentId) {
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ error: 'Missing student_id' }),
+      };
     }
 
-    // ✅ Authorize request (only allow student)
-    const auth = authorize(event, ['student']);
-    if (!auth.success) {
-        return {
-            statusCode: auth.statusCode,
-            headers,
-            body: auth.body,
-        };
+    if (!mongoose.Types.ObjectId.isValid(studentId)) {
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ error: 'Invalid student_id format' }),
+      };
     }
 
-    try {
-        await connectDB();
-      
-        const studentId = event.queryStringParameters.student_id;
-        if (!studentId) {
-          return {
-            statusCode: 400,
-            headers,
-            body: JSON.stringify({ error: 'Missing student_id' }),
-          };
-        }
-      
-        const studentexams = await StudentExam.find({ student_id: studentId })
-          .populate('exam_id')
-          .sort({ _id: -1 })
-          .lean();
-      
-        return {
-          statusCode: 200,
-          headers,
-          body: JSON.stringify(studentexams),
-        };
-      } catch (error) {
-        console.error("❌ Server Error:", error); // log full error stack
-        return {
-          statusCode: 500,
-          headers,
-          body: JSON.stringify({ error: 'Internal Server Error', detail: error.message }),
-        };
-      }
-      
+    const studentexams = await StudentExam.find({ student_id: studentId })
+      .populate('exam_id')
+      .sort({ _id: -1 })
+      .lean();
+
+    return {
+      statusCode: 200,
+      headers,
+      body: JSON.stringify(studentexams),
+    };
+  } catch (error) {
+    console.error("❌ Server Error:", error);
+    return {
+      statusCode: 500,
+      headers,
+      body: JSON.stringify({ error: 'Internal Server Error', detail: error.message }),
+    };
+  }
 };
