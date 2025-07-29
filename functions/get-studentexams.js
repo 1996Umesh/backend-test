@@ -44,7 +44,7 @@ exports.handler = async (event) => {
         }
 
         const studentexams = await StudentExam.find({ student_id: studentId })
-
+            .populate('exam_id')
             .sort({ _id: -1 })
             .lean();
 
