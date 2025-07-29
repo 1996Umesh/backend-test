@@ -5,10 +5,12 @@ const StudentExamSchema = new mongoose.Schema(
         exam_id: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Exam',
-        },
+            required: true
+          },
         student_id: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Student',
+            required: true
         }
     },
     {
