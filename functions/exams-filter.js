@@ -5,8 +5,7 @@ const Exam = require('../models/exam');
 const headers = {
   'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*',
   'Access-Control-Allow-Headers': 'Content-Type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Credentials': 'true',
+  'Access-Control-Allow-Methods': 'GET, OPTIONS',
   'Content-Type': 'application/json',
 };
 
@@ -19,7 +18,7 @@ exports.handler = async (event) => {
     };
   }
 
-  if (event.httpMethod !== 'POST') {
+  if (event.httpMethod !== 'GET') {
     return {
       statusCode: 405,
       headers,
@@ -29,22 +28,15 @@ exports.handler = async (event) => {
 
   try {
     await connectDB();
-    const { country, subject, examDate, startTime } = JSON.parse(event.body);
+
+    const { country, subject, examDate, startTime } = event.queryStringParameters;
 
     const filter = {};
 
-    if (country) {
-      filter.exam_country = { $regex: new RegExp(country, 'i') };
-    }
-    if (subject) {
-      filter.subject_id = subject;
-    }
-    if (examDate) {
-      filter.exam_date = examDate;
-    }
-    if (startTime) {
-      filter.exam_start_time = startTime;
-    }
+    if (country) filter.exam_country = country;
+    if (subject) filter.subject_id = subject;
+    if (examDate) filter.exam_date = examDate;
+    if (startTime) filter.exam_start_time = startTime;
 
     const exams = await Exam.find(filter).sort({ exam_date: 1 }).lean();
 
@@ -53,12 +45,12 @@ exports.handler = async (event) => {
       headers,
       body: JSON.stringify(exams),
     };
-  } catch (err) {
-    console.error('❌ Error filtering exams:', err);
+  } catch (error) {
+    console.error('❌ Filter fetch error:', error);
     return {
       statusCode: 500,
       headers,
-      body: JSON.stringify({ error: 'Internal Server Error' }),
+      body: JSON.stringify({ error: 'Internal Server Error', detail: error.message }),
     };
   }
 };
