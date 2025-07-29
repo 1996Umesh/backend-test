@@ -32,33 +32,33 @@ exports.handler = async (event) => {
 
     try {
         await connectDB();
-
+      
         const studentId = event.queryStringParameters.student_id;
-
         if (!studentId) {
-            return {
-                statusCode: 400,
-                headers,
-                body: JSON.stringify({ error: 'Missing student_id parameter' }),
-            };
+          return {
+            statusCode: 400,
+            headers,
+            body: JSON.stringify({ error: 'Missing student_id' }),
+          };
         }
-
+      
         const studentexams = await StudentExam.find({ student_id: studentId })
-            .populate('exam_id')
-            .sort({ _id: -1 })
-            .lean();
-
+          .populate('exam_id')
+          .sort({ _id: -1 })
+          .lean();
+      
         return {
-            statusCode: 200,
-            headers,
-            body: JSON.stringify(studentexams),
+          statusCode: 200,
+          headers,
+          body: JSON.stringify(studentexams),
         };
-    } catch (error) {
-        console.error("❌ Error fetching exams:", error);
+      } catch (error) {
+        console.error("❌ Server Error:", error); // log full error stack
         return {
-            statusCode: 500,
-            headers,
-            body: JSON.stringify({ error: 'Internal Server Error' }),
+          statusCode: 500,
+          headers,
+          body: JSON.stringify({ error: 'Internal Server Error', detail: error.message }),
         };
-    }
+      }
+      
 };
