@@ -49,7 +49,10 @@ exports.handler = async (event) => {
 
         return {
             statusCode: 200,
-            headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*' },
+            headers: {
+                'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*',
+                'Content-Type': 'application/json',
+            },
             body: JSON.stringify(exam_details),
         };
     } catch (err) {
