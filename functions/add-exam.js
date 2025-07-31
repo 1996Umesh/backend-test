@@ -87,10 +87,14 @@ exports.handler = async (event) => {
 
         return {
             statusCode: 200,
-            headers,
+            headers: {
+                'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*',
+                'Content-Type': 'application/json',
+            },
             body: JSON.stringify({
                 message: 'Exam created successfully!',
             }),
+            
         };
 
     } catch (err) {
