@@ -29,7 +29,7 @@ exports.handler = async (event) => {
 
         const { id, examiner_email, examiner_password } = JSON.parse(event.body);
 
-        if (!id || !examiner_email || !examiner_password) {
+        if (!id || !examiner_email) {
             return {
                 statusCode: 400,
                 headers,
@@ -58,7 +58,10 @@ exports.handler = async (event) => {
 
         return {
             statusCode: 200,
-            headers,
+            headers: {
+                'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*',
+                'Content-Type': 'application/json',
+            },
             body: JSON.stringify({ message: 'Profile updated successfully' }),
         };
     } catch (err) {
