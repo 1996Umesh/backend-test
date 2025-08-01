@@ -3,16 +3,20 @@ const connectDB = require('./connect');
 const StudentExam = require('../models/studentexam');
 const authorize = require('./authorize');
 
+const commonHeaders = {
+    'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Credentials': 'true',
+};
+
 exports.handler = async (event) => {
-    // Handle CORS preflight
+    // CORS preflight
     if (event.httpMethod === 'OPTIONS') {
         return {
             statusCode: 200,
             headers: {
-                'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*',
-                'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+                commonHeaders,
                 'Access-Control-Allow-Methods': 'POST, OPTIONS',
-                'Access-Control-Allow-Credentials': 'true',
             },
             body: '',
         };
@@ -21,17 +25,17 @@ exports.handler = async (event) => {
     if (event.httpMethod !== 'POST') {
         return {
             statusCode: 405,
-            headers: { 'Content-Type': 'application/json' },
+            headers: commonHeaders,
             body: JSON.stringify({ error: 'Method Not Allowed' }),
         };
     }
 
-    // ✅ Authorize request (only allow student)
+    // Authorize request
     const auth = authorize(event, ['student']);
     if (!auth.success) {
         return {
             statusCode: auth.statusCode,
-            headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*' },
+            headers: commonHeaders,
             body: auth.body,
         };
     }
@@ -46,22 +50,27 @@ exports.handler = async (event) => {
             exam_id,
         });
 
-        const savedExamReg = await newExamReg.save();
+        await newExamReg.save();
 
         return {
             statusCode: 200,
+            headers: {
+                commonHeaders,
+                'Content-Type': 'application/json',
+            },
             body: JSON.stringify({
                 message: 'Successfully Registered for exam!',
-                id: savedExamReg._id,
             }),
         };
-
     } catch (err) {
         console.error('❌ Error details:', err);
         return {
             statusCode: 500,
+            headers: {
+                commonHeaders,
+                'Content-Type': 'application/json',
+            },
             body: JSON.stringify({ error: 'Internal Server Error', details: err.message }),
         };
     }
-
 };

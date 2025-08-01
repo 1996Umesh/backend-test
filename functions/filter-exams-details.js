@@ -53,10 +53,7 @@ exports.handler = async (event) => {
                 'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*',
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                message: 'Registered successfully!',
-                exam_details: exam_details,
-            }),
+            body: JSON.stringify(exam_details),
         };
     } catch (err) {
         console.error('❌ Server Error:', err);
