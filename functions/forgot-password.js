@@ -22,11 +22,9 @@ const respond = (statusCode, body) => ({
 let cached = global._mongooseCached;
 async function connectDB() {
     if (cached) return cached;
-    if (!process.env.MONGODB_URI) throw new Error('MONGODB_URI missing');
+    if (!process.env.MONGO_URI) throw new Error('MONGO_URI missing');
     mongoose.set('strictQuery', true);
-    cached = await mongoose.connect(process.env.MONGODB_URI, {
-        dbName: process.env.MONGODB_DB || undefined,
-    });
+    cached = await mongoose.connect(process.env.MONGO_URI);
     global._mongooseCached = cached;
     return cached;
 }
@@ -37,7 +35,7 @@ function buildTransport() {
         service: 'gmail',
         auth: {
             user: process.env.GMAIL_USER,
-            pass: process.env.GMAIL_PASS, // Gmail App Password
+            pass: process.env.GMAIL_PASS,
         },
     });
 }
