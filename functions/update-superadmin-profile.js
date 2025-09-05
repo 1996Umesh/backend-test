@@ -29,7 +29,7 @@ exports.handler = async (event) => {
 
         const { id, superadmin_email, superadmin_password } = JSON.parse(event.body);
 
-        if (!id || !superadmin_email || !superadmin_password) {
+        if (!id || !superadmin_email) {
             return {
                 statusCode: 400,
                 headers,

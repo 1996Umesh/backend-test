@@ -56,10 +56,18 @@ exports.handler = async (event) => {
       statusCode: 200,
       headers,
       body: JSON.stringify({
-        student_id: student._id,
-        student_email: student.student_email,
+        id: student._id,
         student_name: student.student_name,
-        student_phone_no: student.student_phone,
+        student_email: student.student_email,
+        // student_password: student.student_password,
+        student_name_in_certificate: student.student_name_in_certificate,
+        student_id_type: student.student_id_type,
+        student_id: student.student_id,
+        gender: student.gender,
+        student_address: student.student_address,
+        student_phone: student.student_phone_no,
+        guardian_name: student.guardian_name,
+        guardian_phone: student.guardian_phone_no,
       }),
     };
   } catch (err) {

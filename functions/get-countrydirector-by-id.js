@@ -28,7 +28,7 @@ exports.handler = async (event) => {
     try {
         await connectDB();
 
-        const id = event.queryStringParameters && event.queryStringParameters.id;
+        const id = event.queryStringParameters?.id;
 
         if (!id) {
             return {

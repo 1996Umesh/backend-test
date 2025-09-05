@@ -31,7 +31,14 @@ exports.handler = async (event) => {
     try {
         await connectDB();
 
-        const { id, exam_name, exam_fee, exam_date, exam_start_time, exam_end_time } = JSON.parse(event.body);
+        const { id,
+            exam_title,
+            exam_description,
+            exam_fee,
+            exam_date,
+            exam_day,
+            exam_start_time,
+            exam_end_time, } = JSON.parse(event.body);
 
         if (!id) {
             return {
@@ -48,9 +55,11 @@ exports.handler = async (event) => {
         const duration = (end - start) / 60000;
 
         const updateData = {
-            exam_name: exam_name,
+            exam_title: exam_title,
+            exam_description: exam_description,
             exam_fee: exam_fee,
             exam_date: exam_date,
+            exam_day: exam_day,
             exam_start_time: exam_start_time,
             exam_end_time: exam_end_time,
             exam_time_duration: duration,

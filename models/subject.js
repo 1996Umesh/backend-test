@@ -1,22 +1,15 @@
 const mongoose = require('mongoose');
 
 const SubjectSchema = new mongoose.Schema(
-    {
-        subject_name: {
-            type: String,
-            required: true,
-            unique: true,
-            trim: true
-        },
-        countrydirector_id: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'CountryDirector', // 🔁 Who assigned this countrydirector
-        }
-    },
-    {
-        collection: 'subject',
-        // timestamps: true // createdAt, updatedAt
-    }
+  {
+    subject_code: { type: String, required: true },
+    subject_title: { type: String, required: true },
+    countrydirector_id: { type: mongoose.Schema.Types.ObjectId, ref: "CountryDirector" },
+  },
+  {
+    collection: 'subject', // force exact collection name
+  }
 );
 
-module.exports = mongoose.model('Subject', SubjectSchema);
+// ✅ Prevent OverwriteModelError in serverless
+module.exports = mongoose.models.Subject || mongoose.model('Subject', SubjectSchema);

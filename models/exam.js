@@ -1,10 +1,14 @@
 const mongoose = require('mongoose');
 
 const ExamSchema = new mongoose.Schema({
-  exam_name: {
+  exam_title: {
     type: String,
     required: true,
     trim: true
+  },
+  exam_description: {
+    type: String,
+    required: true
   },
   exam_fee: {
     type: Number,
@@ -12,6 +16,10 @@ const ExamSchema = new mongoose.Schema({
   },
   exam_date: {
     type: Date,
+    required: true
+  },
+  exam_day: {
+    type: String,
     required: true
   },
   exam_start_time: {

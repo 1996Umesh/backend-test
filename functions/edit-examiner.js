@@ -28,9 +28,9 @@ exports.handler = async (event) => {
   try {
     await connectDB();
 
-    const { id, examiner_name, subject_id, examiner_email, examiner_password } = JSON.parse(event.body);
+    const { id, examiner_id, examiner_name, subject_id, examiner_email, examiner_password } = JSON.parse(event.body);
 
-    if (!id || !examiner_name || !subject_id || !examiner_email) {
+    if (!id || !examiner_id || !examiner_name || !subject_id || !examiner_email) {
       return {
         statusCode: 400,
         headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*' },
@@ -39,6 +39,7 @@ exports.handler = async (event) => {
     }
 
     const updateData = {
+      examiner_id,
       examiner_name,
       subject_id,
       examiner_email,

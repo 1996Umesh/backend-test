@@ -31,7 +31,7 @@ exports.handler = async (event) => {
   try {
     await connectDB();
 
-    const { id, country, countrydirector_name, countrydirector_email, phone, countrydirector_password } = JSON.parse(event.body);
+    const { id, country, countrydirector_id, countrydirector_name, countrydirector_email, countrydirector_password } = JSON.parse(event.body);
 
     if (!id) {
       return {
@@ -45,9 +45,9 @@ exports.handler = async (event) => {
 
     const updateData = {
       country,
+      countrydirector_id,
       countrydirector_name,
       countrydirector_email,
-      phone,
     };
 
     if (countrydirector_password && countrydirector_password.trim() !== '') {

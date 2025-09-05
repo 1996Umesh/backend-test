@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const StudentSchema = new mongoose.Schema(
   {
+    student_name: { type: String, required: true, trim: true },
     student_email: {
       type: String,
       required: true,
@@ -10,56 +11,17 @@ const StudentSchema = new mongoose.Schema(
       trim: true,
       match: [/.+\@.+\..+/, 'Please enter a valid email address'],
     },
-    student_password: {
-      type: String,
-      required: true,
-      minlength: 6,
-    },
-    student_name: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    student_country: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    student_phone: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    student_address: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    date_of_birth: {
-      type: String, // You can change this to Date if you prefer
-      required: true,
-      trim: true,
-    },
-    gender: {
-      type: String,
-      enum: ['male', 'female', 'other'],
-      required: true,
-    },
-    guardian_name: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    guardian_address: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    guardian_phone: {
-      type: String,
-      required: true,
-      trim: true,
-    },
+    student_password: { type: String, required: true },
+
+    // optional fields
+    student_name_in_certificate: { type: String, default: null },
+    student_id_type: { type: String, default: null },
+    student_id: { type: String, default: null },
+    gender: { type: String, default: null },
+    student_address: { type: String, default: null },
+    student_phone_no: { type: String, default: null },
+    guardian_name: { type: String, default: null },
+    guardian_phone_no: { type: String, default: null },
   },
   {
     collection: 'student', // ⬅ plural is recommended

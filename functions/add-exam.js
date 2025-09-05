@@ -29,7 +29,7 @@ exports.handler = async (event) => {
         };
     }
 
-    // ✅ Authorize request (only allow examiner)
+    // ✅ Authorize request (only allow superadmin)
     const auth = authorize(event, ['examiner']);
     if (!auth.success) {
         return {
@@ -42,9 +42,16 @@ exports.handler = async (event) => {
     try {
         await connectDB();
 
-        const { exam_name, exam_fee, exam_date, exam_start_time, exam_end_time, examiner_id } = JSON.parse(event.body);
+        const { exam_title,
+            exam_description,
+            exam_fee,
+            exam_date,
+            exam_day,
+            exam_start_time,
+            exam_end_time,
+            examiner_id, } = JSON.parse(event.body);
 
-        if (!exam_name || !exam_fee || !exam_date || !exam_start_time || !exam_end_time || !examiner_id) {
+        if (!exam_title || !exam_description || !exam_fee || !exam_date || !exam_day || !exam_start_time || !exam_end_time || !examiner_id) {
             return {
                 statusCode: 400,
                 body: JSON.stringify({ error: 'All fields are required.' }),
@@ -72,9 +79,11 @@ exports.handler = async (event) => {
         const duration = (end - start) / 60000;
 
         const newExam = new Exam({
-            exam_name,
+            exam_title,
+            exam_description,
             exam_fee,
             exam_date,
+            exam_day,
             exam_start_time,
             exam_end_time,
             exam_time_duration: duration,
@@ -94,7 +103,7 @@ exports.handler = async (event) => {
             body: JSON.stringify({
                 message: 'Exam created successfully!',
             }),
-            
+
         };
 
     } catch (err) {

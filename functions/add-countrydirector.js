@@ -49,19 +49,21 @@ exports.handler = async (event) => {
     }
 
     const {
+      countrydirector_id,
       country,
       countrydirector_name,
       countrydirector_email,
-      phone,
+      // phone,
       countrydirector_password,
     } = JSON.parse(event.body);
 
     // Validate required fields
     if (
+      !countrydirector_id ||
       !country ||
       !countrydirector_name ||
       !countrydirector_email ||
-      !phone ||
+      // !phone ||
       !countrydirector_password
     ) {
       return {
@@ -72,7 +74,13 @@ exports.handler = async (event) => {
     }
 
     // Check if user already exists
-    const existing = await CountryDirector.findOne({ countrydirector_email });
+    const existing = await CountryDirector.findOne({
+      $or: [
+        { countrydirector_email },
+        { countrydirector_id }
+      ]
+    });
+    
     if (existing) {
       return {
         statusCode: 400,
@@ -86,10 +94,11 @@ exports.handler = async (event) => {
 
     // Create new CountryDirector
     const newDirector = new CountryDirector({
+      countrydirector_id,
       country,
       countrydirector_name,
       countrydirector_email,
-      phone, // already full international number (e.g., +94771234567)
+      // phone, // already full international number (e.g., +94771234567)
       countrydirector_password: hashedPassword,
     });
 

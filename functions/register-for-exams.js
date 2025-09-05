@@ -1,6 +1,6 @@
 require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
 const connectDB = require('./connect');
-const StudentExam = require('../models/studentexam');
+const ExamPayment = require('../models/exampayment');
 const authorize = require('./authorize');
 
 const commonHeaders = {
@@ -15,7 +15,9 @@ exports.handler = async (event) => {
         return {
             statusCode: 200,
             headers: {
-                commonHeaders,
+                'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*',
+                'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+                'Access-Control-Allow-Credentials': 'true',
                 'Access-Control-Allow-Methods': 'POST, OPTIONS',
             },
             body: '',
@@ -25,7 +27,11 @@ exports.handler = async (event) => {
     if (event.httpMethod !== 'POST') {
         return {
             statusCode: 405,
-            headers: commonHeaders,
+            headers: {
+                'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*',
+                'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+                'Access-Control-Allow-Credentials': 'true',
+            },
             body: JSON.stringify({ error: 'Method Not Allowed' }),
         };
     }
@@ -35,7 +41,11 @@ exports.handler = async (event) => {
     if (!auth.success) {
         return {
             statusCode: auth.statusCode,
-            headers: commonHeaders,
+            headers: {
+                'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*',
+                'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+                'Access-Control-Allow-Credentials': 'true',
+            },
             body: auth.body,
         };
     }
@@ -43,11 +53,15 @@ exports.handler = async (event) => {
     try {
         await connectDB();
 
-        const { student_id, exam_id } = JSON.parse(event.body);
+        const { paid_amount, student_id, exam_id } = JSON.parse(event.body);
 
-        const newExamReg = new StudentExam({
+        const newExamReg = new ExamPayment({
+            paid_date: new Date(),
+            paid_amount,
+            payment_status: "1",
             student_id,
             exam_id,
+            
         });
 
         await newExamReg.save();
@@ -55,7 +69,9 @@ exports.handler = async (event) => {
         return {
             statusCode: 200,
             headers: {
-                commonHeaders,
+                'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*',
+                'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+                'Access-Control-Allow-Credentials': 'true',
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
@@ -67,7 +83,9 @@ exports.handler = async (event) => {
         return {
             statusCode: 500,
             headers: {
-                commonHeaders,
+                'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*',
+                'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+                'Access-Control-Allow-Credentials': 'true',
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ error: 'Internal Server Error', details: err.message }),

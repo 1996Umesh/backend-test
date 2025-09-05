@@ -2,6 +2,12 @@ const mongoose = require('mongoose');
 
 const ExaminerSchema = new mongoose.Schema(
     {
+        examiner_id: {
+            type: String,
+            required: true,
+            unique: true,
+            trim: true
+        },
         examiner_name: {
             type: String,
             required: true,

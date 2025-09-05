@@ -41,52 +41,52 @@ exports.handler = async (event) => {
     let user = null;
 
     // Check Superadmin
-    // const superadmin = await Superadmin.findOne({ superadmin_email: email });
-    // if (superadmin && await bcrypt.compare(password, superadmin.superadmin_password)) {
-    //   user = superadmin;
-    //   userId = superadmin._id;
-    //   role = 'superadmin';
-    // }
+    const superadmin = await Superadmin.findOne({ superadmin_email: email });
+    if (superadmin && await bcrypt.compare(password, superadmin.superadmin_password)) {
+      user = superadmin;
+      userId = superadmin._id;
+      role = 'superadmin';
+    }
 
     // Check Country Director
-    // if (!user) {
-    //   const countrydirector = await CountryDirector.findOne({
-    //     $or: [
-    //       { countrydirector_email: email },
-    //       { countrydirector_id: email }
-    //     ]
-    //   });
-    //   if (countrydirector && await bcrypt.compare(password, countrydirector.countrydirector_password)) {
-    //     user = countrydirector;
-    //     userId = countrydirector._id;
-    //     role = 'countrydirector';
-    //   }
-    // }
-
-    // Check Examiner
-    // if (!user) {
-    //   const examiner = await Examiner.findOne({
-    //     $or: [
-    //       { examiner_email: email },
-    //       { examiner_id: email }
-    //     ]
-    //   });
-    //   if (examiner && await bcrypt.compare(password, examiner.examiner_password)) {
-    //     user = examiner;
-    //     userId = examiner._id;
-    //     role = 'examiner';
-    //   }
-    // }
-
-    // Check Student
     if (!user) {
-      const student = await Student.findOne({ student_email: email });
-      if (student && await bcrypt.compare(password, student.student_password)) {
-        user = student;
-        userId = student._id;
-        role = 'student';
+      const countrydirector = await CountryDirector.findOne({
+        $or: [
+          { countrydirector_email: email },
+          { countrydirector_id: email }
+        ]
+      });
+      if (countrydirector && await bcrypt.compare(password, countrydirector.countrydirector_password)) {
+        user = countrydirector;
+        userId = countrydirector._id;
+        role = 'countrydirector';
       }
     }
+
+    // Check Examiner
+    if (!user) {
+      const examiner = await Examiner.findOne({
+        $or: [
+          { examiner_email: email },
+          { examiner_id: email }
+        ]
+      });
+      if (examiner && await bcrypt.compare(password, examiner.examiner_password)) {
+        user = examiner;
+        userId = examiner._id;
+        role = 'examiner';
+      }
+    }
+
+    // Check Student
+    // if (!user) {
+    //   const student = await Student.findOne({ student_email: email });
+    //   if (student && await bcrypt.compare(password, student.student_password)) {
+    //     user = student;
+    //     userId = student._id;
+    //     role = 'student';
+    //   }
+    // }
 
     if (!user) {
       return {

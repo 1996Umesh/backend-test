@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const connectDB = require('./connect');
 const Subject = require('../models/subject');
 const authorize = require('./authorize'); // If in separate file, otherwise copy function above
+// const { Console } = require('console');
 
 exports.handler = async (event) => {
     // Handle CORS preflight
@@ -19,15 +20,9 @@ exports.handler = async (event) => {
         };
     }
 
-    if (event.httpMethod !== 'POST') {
-        return {
-            statusCode: 405,
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ error: 'Method Not Allowed' }),
-        };
-    }
 
-    // ✅ Authorize request (only allow countrydirector)
+
+    // ✅ Authorize request
     const auth = authorize(event, ['countrydirector']);
     if (!auth.success) {
         return {
@@ -48,10 +43,10 @@ exports.handler = async (event) => {
             };
         }
 
-        const { subject_name, countrydirector_id } = JSON.parse(event.body);
+        const { subject_code, subject_title, countrydirector_id } = JSON.parse(event.body);
 
-        // Validate required fields
-        if (!subject_name) {
+        // Validate required fields 
+        if (!subject_code || !subject_title) {
             return {
                 statusCode: 400,
                 headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*' },
@@ -60,8 +55,7 @@ exports.handler = async (event) => {
         }
 
         // Create new Subject
-        const newSubject = new Subject({ subject_name, countrydirector_id });
-
+        const newSubject = new Subject({ subject_code, subject_title, countrydirector_id });
         const savedSubject = await newSubject.save();
 
         return {
@@ -77,7 +71,10 @@ exports.handler = async (event) => {
         return {
             statusCode: 500,
             headers: { 'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*' },
-            body: JSON.stringify({ error: 'Internal Server Error' }),
+            body: JSON.stringify({
+                error: 'Internal Server Error',
+                details: err.message  // 👈 expose actual error in response
+            }),
         };
     }
 };

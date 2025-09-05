@@ -31,7 +31,7 @@ exports.handler = async (event) => {
   try {
     await connectDB();
 
-    const { id, subject } = JSON.parse(event.body);
+    const { id, subjectCode, subjectTitle } = JSON.parse(event.body);
 
     if (!id) {
       return {
@@ -44,7 +44,8 @@ exports.handler = async (event) => {
     }
 
     const updateData = {
-        subject_name: subject
+        subject_code: subjectCode,
+        subject_title: subjectTitle,
     };
 
     const updated = await Subject.findByIdAndUpdate(id, updateData, { new: true });

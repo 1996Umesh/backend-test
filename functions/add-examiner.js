@@ -48,10 +48,11 @@ exports.handler = async (event) => {
             };
         }
 
-        const { examiner_name, subject_id, examiner_email, examiner_password, countrydirector_id } = JSON.parse(event.body);
+        const { examiner_id, examiner_name, subject_id, examiner_email, examiner_password, countrydirector_id } = JSON.parse(event.body);
 
         // Validate required fields
         if (
+            !examiner_id ||
             !examiner_name ||
             !subject_id ||
             !examiner_email ||
@@ -66,7 +67,12 @@ exports.handler = async (event) => {
         }
 
         // Check if user already exists
-        const existing = await Examiner.findOne({ examiner_email });
+        const existing = await Examiner.findOne({
+            $or: [
+                { examiner_email },
+                { examiner_id }
+            ]
+        });
         if (existing) {
             return {
                 statusCode: 400,
@@ -80,6 +86,7 @@ exports.handler = async (event) => {
 
         // Create new Examiner
         const newExaminer = new Examiner({
+            examiner_id,
             examiner_name,
             subject_id,
             examiner_email,

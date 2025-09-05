@@ -27,9 +27,9 @@ exports.handler = async (event) => {
             };
         };
 
-        const { id, student_name, student_email, student_password, student_phone_no } = JSON.parse(event.body);
+        const { id, student_name, student_email, student_password, student_name_in_certificate, student_id_type, student_id, student_address, gender, student_phone, guardian_phone, guardian_name } = JSON.parse(event.body);
 
-        if (!id || !student_name || !student_email || !student_phone_no) {
+        if (!id || !student_name || !student_email) {
             return {
                 statusCode: 400,
                 headers,
@@ -42,10 +42,17 @@ exports.handler = async (event) => {
         const updated = await Student.findByIdAndUpdate(
             id,
             {
-              student_name,
-              student_email,
-              student_password: hashedPassword,
-              student_phone: student_phone_no,
+                student_name: student_name,
+                student_email: student_email,
+                student_password: hashedPassword,
+                student_phone: student_name_in_certificate,
+                student_id_type: student_id_type,
+                student_id: student_id,
+                student_address: student_address,
+                gender: gender,
+                student_phone_no: student_phone,
+                guardian_phone_no: guardian_phone,
+                guardian_name: guardian_name
             },
             { new: true }
         );
