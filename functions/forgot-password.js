@@ -70,9 +70,9 @@ exports.handler = async (event) => {
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-                user: 'umesh123hirantha@gmail.com',
-                pass: 'Umesh@123',
-            },
+                user: process.env.GMAIL_USER,
+                pass: process.env.GMAIL_APP_PASSWORD,
+            }
         });
 
         const userEmail = user.superadmin_email ||
