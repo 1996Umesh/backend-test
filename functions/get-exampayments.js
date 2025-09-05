@@ -5,14 +5,19 @@ const ExamPayment = require('../models/exampayment');
 const Exam = require('../models/exam'); // ✅ required for populate to work
 const authorize = require('./authorize');
 
+// const headers = {
+//   'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*',
+//   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+//   'Access-Control-Allow-Methods': 'GET, OPTIONS',
+//   'Access-Control-Allow-Credentials': 'true',
+//   'Content-Type': 'application/json'
+// };
 const headers = {
   'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  'Access-Control-Allow-Headers': 'Content-Type',
   'Access-Control-Allow-Methods': 'GET, OPTIONS',
-  'Access-Control-Allow-Credentials': 'true',
-  'Content-Type': 'application/json'
+  'Content-Type': 'application/json',
 };
-
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
     return {
