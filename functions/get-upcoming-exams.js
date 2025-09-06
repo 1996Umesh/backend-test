@@ -6,9 +6,9 @@ const authorize = require('./authorize');
 
 const headers = {
     'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*',
-    "Access-Control-Allow-Headers": "Content-Type, Authorization",
-        "Access-Control-Allow-Methods": "GET, OPTIONS",
-        "Access-Control-Allow-Credentials": "true",
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'GET, OPTIONS',
+    'Content-Type': 'application/json',
 };
 // const headers = {
 //     'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*',
@@ -37,7 +37,7 @@ exports.handler = async (event) => {
 
     try {
         await connectDB();
-        
+
         const exams = await Exam.find()
             .sort({ _id: -1 }) // newest first
             .limit(5)          // only 5 records
