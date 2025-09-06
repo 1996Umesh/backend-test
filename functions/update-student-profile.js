@@ -45,7 +45,7 @@ exports.handler = async (event) => {
                 student_name: student_name,
                 student_email: student_email,
                 student_password: hashedPassword,
-                student_phone: student_name_in_certificate,
+                student_name_in_certificate: student_name_in_certificate,
                 student_id_type: student_id_type,
                 student_id: student_id,
                 student_address: student_address,
