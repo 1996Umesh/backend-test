@@ -37,25 +37,26 @@ exports.handler = async (event) => {
             };
         }
 
-        const hashedPassword = await bcrypt.hash(student_password, 10);
-
-        const updated = await Student.findByIdAndUpdate(
-            id,
-            {
-                student_name: student_name,
-                student_email: student_email,
-                student_password: hashedPassword,
-                student_name_in_certificate: student_name_in_certificate,
-                student_id_type: student_id_type,
-                student_id: student_id,
-                student_address: student_address,
-                gender: gender,
-                student_phone_no: student_phone,
-                guardian_phone_no: guardian_phone,
-                guardian_name: guardian_name
-            },
-            { new: true }
-        );
+        const updateFields = {
+            student_name,
+            student_email,
+            student_name_in_certificate,
+            student_id_type,
+            student_id,
+            student_address,
+            gender,
+            student_phone_no: student_phone,
+            guardian_phone_no: guardian_phone,
+            guardian_name,
+          };
+          
+          // Only update password if provided
+          if (student_password && student_password.trim() !== "") {
+            const hashedPassword = await bcrypt.hash(student_password, 10);
+            updateFields.student_password = hashedPassword;
+          }
+          
+          const updated = await Student.findByIdAndUpdate(id, updateFields, { new: true });
 
         if (!updated) {
             return {
